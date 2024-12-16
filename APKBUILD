@@ -1,15 +1,14 @@
 # Contributor: Clayton Craft <clayton@craftyguy.net>
-# Maintainer: Hugo Osvaldo Barrera <hugo@whynothugo.nl>
-pkgname=systemd-boot
+# Contributor: Hugo Osvaldo Barrera <hugo@whynothugo.nl>
+# Maintainer: Struan Robertson <contact@struanrobertson.co.uk>
+pkgname=systemd-efistub
 pkgver=257
 pkgrel=0
-pkgdesc="systemd's EFI boot manager and stub"
+pkgdesc="systemd's EFI boot stub and ukify"
 url="https://systemd.io/"
-# armv7: TODO: does this build?
-# riscv64: no upstream support?
-# x86: does upstream support this?
-arch="x86_64 aarch64 armv7"
-license="GPL-2.0-only"
+# riscv64: I have no way to test this currently
+arch="x86_64 x86 aarch64 armv7"
+license="LGPL-2.1-or-later"
 makedepends="
 	bash
 	coreutils
@@ -25,7 +24,7 @@ source="
 	0001-patch-wchar_t-for-musl.patch
 	"
 options="!check"  # no tests
-subpackages="ukify:ukify:noarch $pkgname-stub:efistub"
+subpackages="ukify:ukify:noarch"
 builddir="$srcdir/systemd-$pkgver"
 
 build() {
@@ -100,10 +99,10 @@ build() {
 }
 
 package() {
-	mkdir -p "$pkgdir"/usr/lib/systemd/boot
+	mkdir -p "$pkgdir"/usr/lib/systemd/boot/efi
 
-	find output/src/boot/ -name 'systemd*.efi' -exec \
-		install -Dm 644 {} -t "$pkgdir"/usr/lib/systemd/boot/ \;
+	find "$builddir/output/src/boot/" -name '*.stub' -exec \
+		install -Dm 644 {} -t "$subpkgdir"/usr/lib/systemd/boot/efi \;
 }
 
 ukify() {
@@ -111,11 +110,6 @@ ukify() {
 
 	install -Dm755 "$builddir"/src/ukify/ukify.py \
 		"$subpkgdir"/usr/bin/ukify
-}
-
-efistub() {
-	find "$builddir/output/src/boot/" -name '*.stub' -exec \
-		install -Dm 644 {} -t "$subpkgdir"/usr/lib/systemd/boot/ \;
 }
 
 sha512sums="
