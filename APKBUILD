@@ -102,7 +102,7 @@ package() {
 	mkdir -p "$pkgdir"/usr/lib/systemd/boot/efi
 
 	find "$builddir/output/src/boot/" -name '*.stub' -exec \
-		install -Dm 644 {} -t "$subpkgdir"/usr/lib/systemd/boot/efi \;
+		install -Dm 644 {} -t "$pkgdir"/usr/lib/systemd/boot/efi \;
 }
 
 ukify() {
